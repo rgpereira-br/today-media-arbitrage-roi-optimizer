@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Today Media — Arbitrage & ROI Optimizer</title>
+    
+    <!-- Google Fonts: JetBrains Mono (precisão matemática) e Hanken Grotesk (legibilidade premium) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    
+    <!-- Ícones Lucide para manter visual limpo -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Bibliotecas Externas via CDN (Processamento local) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Folha de estilo customizada -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Top Navigation Bar (Glassmorphic) -->
+    <header class="top-nav">
+        <div class="nav-container">
+            <a href="#" class="brand">IT'S TODAY MEDIA <span class="brand-sub">// ROI OPTIMIZER</span></a>
+            <nav class="nav-links">
+                <a href="#uploader-section" class="active">Uploader</a>
+                <a href="#dashboard-section">Dashboard</a>
+                <a href="#table-section">Campanhas</a>
+                <a href="#ai-section">Recomendações</a>
+            </nav>
+            <div class="api-key-container">
+                <button id="btn-api-settings" class="btn btn-secondary">
+                    <i data-lucide="key"></i>
+                    <span>Chave Gemini API</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Seção Uploader -->
+        <section id="uploader-section" class="content-section">
+            <div class="section-header">
+                <span class="label-tag">PASSO 01</span>
+                <h2>Importação de Dados</h2>
+                <p>Arraste e solte ou selecione os arquivos CSV originais da sua fonte de tráfego e plataforma de afiliado.</p>
+            </div>
+
+            <div class="upload-grid">
+                <!-- Dropzone Custo (Tráfego) -->
+                <div class="glass-card upload-card" id="dropzone-cost">
+                    <input type="file" id="file-cost" accept=".csv" class="hidden-input">
+                    <div class="upload-content">
+                        <div class="icon-circle cost-icon">
+                            <i data-lucide="trending-up"></i>
+                        </div>
+                        <h3>Planilha de Custos / Cliques</h3>
+                        <p>Meta Ads, Google Ads, Taboola ou TikTok Ads</p>
+                        <span class="btn btn-outline select-file-btn">Selecionar CSV</span>
+                        <div class="file-info hidden" id="info-cost">
+                            <i data-lucide="file-text"></i>
+                            <span class="file-name">arquivo.csv</span>
+                            <button class="btn-clear-file" id="clear-cost">&times;</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dropzone Receita (Afiliado) -->
+                <div class="glass-card upload-card" id="dropzone-revenue">
+                    <input type="file" id="file-revenue" accept=".csv" class="hidden-input">
+                    <div class="upload-content">
+                        <div class="icon-circle revenue-icon">
+                            <i data-lucide="dollar-sign"></i>
+                        </div>
+                        <h3>Planilha de Receitas / Conversões</h3>
+                        <p>ClickBank, Hotmart, Shopify ou Rede de Afiliados</p>
+                        <span class="btn btn-outline select-file-btn">Selecionar CSV</span>
+                        <div class="file-info hidden" id="info-revenue">
+                            <i data-lucide="file-text"></i>
+                            <span class="file-name">arquivo.csv</span>
+                            <button class="btn-clear-file" id="clear-revenue">&times;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Painel de Amostra de Teste Rápido (Para facilitar avaliação rápida do concurso) -->
+            <div class="test-helper-panel glass-card">
+                <div class="helper-content">
+                    <i data-lucide="zap"></i>
+                    <div>
+                        <h4>Quer testar a ferramenta sem planilhas reais?</h4>
+                        <p>Clique no botão para carregar dados fictícios realistas de uma operação ativa de media buying.</p>
+                    </div>
+                </div>
+                <button id="btn-load-mock-data" class="btn btn-primary">Carregar Dados de Demonstração</button>
+            </div>
+        </section>
+
+        <!-- Seção de Mapeamento Manual (Oculta por padrão) -->
+        <section id="mapping-section" class="content-section hidden">
+            <div class="glass-card mapping-card">
+                <div class="mapping-header">
+                    <div class="icon-warning-glow">
+                        <i data-lucide="alert-circle"></i>
+                    </div>
+                    <div>
+                        <h3>Mapeamento de Colunas Necessário</h3>
+                        <p>Não conseguimos identificar todas as colunas obrigatórias automaticamente. Ajuste abaixo:</p>
+                    </div>
+                </div>
+                
+                <div class="mapping-grids">
+                    <!-- Mapeamento de Custo -->
+                    <div class="mapping-col">
+                        <h4>Dados de Custos (Tráfego)</h4>
+                        <div class="form-group">
+                            <label for="map-cost-campaign">Coluna de Campanha (Nome ou ID):</label>
+                            <select id="map-cost-campaign" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="map-cost-spend">Coluna de Investimento (Custo/Gasto):</label>
+                            <select id="map-cost-spend" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="map-cost-date">Coluna de Data:</label>
+                            <select id="map-cost-date" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="map-cost-clicks">Coluna de Cliques (Opcional):</label>
+                            <select id="map-cost-clicks" class="form-control"></select>
+                        </div>
+                    </div>
+
+                    <!-- Mapeamento de Receita -->
+                    <div class="mapping-col">
+                        <h4>Dados de Receitas (Afiliados)</h4>
+                        <div class="form-group">
+                            <label for="map-rev-campaign">Coluna de Campanha (Nome ou ID/UTM):</label>
+                            <select id="map-rev-campaign" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="map-rev-value">Coluna de Faturamento (Receita/Comissão):</label>
+                            <select id="map-rev-value" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="map-rev-date">Coluna de Data:</label>
+                            <select id="map-rev-date" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="map-rev-sales">Coluna de Conversões/Vendas (Opcional):</label>
+                            <select id="map-rev-sales" class="form-control"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mapping-actions">
+                    <button id="btn-process-mapping" class="btn btn-primary">Processar Cruzamento de Dados</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção Dashboard de Métricas (Mostrada após processamento) -->
+        <section id="dashboard-section" class="content-section results-only hidden">
+            <div class="section-header">
+                <span class="label-tag">PASSO 02</span>
+                <h2>Dashboard de Performance</h2>
+                <p>Resultado consolidados do cruzamento de custos de tráfego com faturamento de conversões.</p>
+            </div>
+
+            <!-- Cards Resumo -->
+            <div class="metrics-grid">
+                <!-- Total Investido -->
+                <div class="glass-card metric-card">
+                    <span class="metric-label">Investimento Total</span>
+                    <h3 id="stat-spend" class="mono">$0.00</h3>
+                    <div class="metric-footer text-muted" id="stat-clicks-wrapper">
+                        <span id="stat-clicks" class="mono">0</span> Cliques // CPC Médio: <span id="stat-cpc" class="mono">$0.00</span>
+                    </div>
+                </div>
+
+                <!-- Total Faturado -->
+                <div class="glass-card metric-card">
+                    <span class="metric-label">Faturamento Total</span>
+                    <h3 id="stat-revenue" class="mono">$0.00</h3>
+                    <div class="metric-footer text-muted" id="stat-sales-wrapper">
+                        <span id="stat-sales" class="mono">0</span> Conversões // Ticket Médio: <span id="stat-ticket" class="mono">$0.00</span>
+                    </div>
+                </div>
+
+                <!-- Lucro Líquido -->
+                <div class="glass-card metric-card">
+                    <span class="metric-label">Lucro Líquido (Arbitragem)</span>
+                    <h3 id="stat-profit" class="mono">$0.00</h3>
+                    <div class="metric-footer text-muted">
+                        Faturamento menos investimento de mídia
+                    </div>
+                </div>
+
+                <!-- ROI Geral -->
+                <div class="glass-card metric-card">
+                    <span class="metric-label">ROI Médio</span>
+                    <h3 id="stat-roi" class="mono">0.0%</h3>
+                    <div class="metric-footer text-muted" id="stat-roi-footer">
+                        Retorno Geral sobre o Investimento
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráfico de Performance -->
+            <div class="glass-card chart-card">
+                <div class="card-header">
+                    <h3>Curva de Arbitragem no Tempo</h3>
+                    <p class="text-muted">Comparativo diário de Investimento de Mídia vs Receita de Afiliado</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tabela de Campanhas -->
+        <section id="table-section" class="content-section results-only hidden">
+            <div class="glass-card table-card">
+                <div class="card-header flex-header">
+                    <div>
+                        <h3>Análise Detalhada por Campanha</h3>
+                        <p class="text-muted">Ordene clicando nos cabeçalhos das colunas.</p>
+                    </div>
+                    <div class="table-actions">
+                        <button id="btn-export-csv" class="btn btn-outline">
+                            <i data-lucide="download"></i>
+                            <span>Exportar CSV Cruzado</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table" id="campaign-table">
+                        <thead>
+                            <tr>
+                                <th class="sortable active-sort" data-sort="name">Campanha <i class="sort-icon desc"></i></th>
+                                <th class="sortable" data-sort="spend">Investimento <i class="sort-icon"></i></th>
+                                <th class="sortable" data-sort="revenue">Receita <i class="sort-icon"></i></th>
+                                <th class="sortable" data-sort="profit">Lucro Líquido <i class="sort-icon"></i></th>
+                                <th class="sortable" data-sort="roi">ROI <i class="sort-icon"></i></th>
+                                <th class="sortable" data-sort="cpa">CPA <i class="sort-icon"></i></th>
+                                <th class="sortable" data-sort="status">Status Arbitragem <i class="sort-icon"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Inserido dinamicamente via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção Otimização de IA -->
+        <section id="ai-section" class="content-section results-only hidden">
+            <div class="section-header">
+                <span class="label-tag">PASSO 03</span>
+                <h2>Recomendações e Otimização da IA</h2>
+                <p>Análise automatizada de arbitragem recomendando escalabilidade ou pausa de orçamentos.</p>
+            </div>
+
+            <div class="ai-box glass-card">
+                <div class="ai-header">
+                    <div class="gemini-badge">
+                        <i data-lucide="sparkles"></i>
+                        <span>GEMINI INTELLIGENCE</span>
+                    </div>
+                    <button id="btn-generate-ai" class="btn btn-primary">
+                        <i data-lucide="refresh-cw"></i>
+                        <span>Gerar Novo Diagnóstico</span>
+                    </button>
+                </div>
+
+                <div class="ai-response-body" id="ai-response">
+                    <div class="ai-welcome-state">
+                        <i data-lucide="brain-circuit" class="brain-glow"></i>
+                        <h3>Pronto para Otimização de Campanha</h3>
+                        <p>Clique em "Gerar Novo Diagnóstico" para analisar as métricas estruturadas e extrair conselhos práticos para a sua operação.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal de Configuração da Gemini API Key -->
+    <div class="modal-backdrop hidden" id="modal-api">
+        <div class="glass-card modal-card">
+            <div class="modal-header">
+                <h3>Configuração de API Key</h3>
+                <button class="modal-close" id="btn-close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">A integração com a IA utiliza a API oficial da Gemini. Por segurança, sua chave é salva **apenas localmente no seu próprio navegador** (localStorage) e não é enviada para nenhum servidor externo.</p>
+                
+                <div class="form-group margin-top">
+                    <label for="input-api-key">Gemini API Key:</label>
+                    <input type="password" id="input-api-key" placeholder="Insira sua AIzaSy..." class="form-control">
+                </div>
+                
+                <p class="text-sm text-accent">Dica: Se você não inserir nenhuma chave de API, a ferramenta entrará em modo de simulação inteligente e gerará as análises com base em dados de amostra offline locais para avaliação rápida.</p>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-save-api-key" class="btn btn-primary">Salvar Chave Localmente</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script da Aplicação -->
+    <script src="app.js"></script>
+    <script>
+        // Inicializa ícones do Lucide
+        lucide.createIcons();
+    </script>
+</body>
+</html>
