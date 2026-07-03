@@ -1,6 +1,6 @@
 # Today Media — Arbitrage & ROI Optimizer
 
-> **Live Demo:** [https://today-media-arbitrage-roi-optimizer.vercel.app/](https://today-media-arbitrage-roi-optimizer.vercel.app/) *(Exemplo de link Vercel)*
+> **Live Demo:** [https://rgpereira-br.github.io/today-media-arbitrage-roi-optimizer/](https://rgpereira-br.github.io/today-media-arbitrage-roi-optimizer/)
 > 
 > **Amostras de Teste:** [amostra_custos_anuncios.csv](file:///g:/Meu%20Drive/Tech/R2P2%20Tech.AI/Projetos-Internos/r2p2-marketing-project-today-media/amostra_custos_anuncios.csv) & [amostra_receitas_afiliados.csv](file:///g:/Meu%20Drive/Tech/R2P2%20Tech.AI/Projetos-Internos/r2p2-marketing-project-today-media/amostra_receitas_afiliados.csv)
 
